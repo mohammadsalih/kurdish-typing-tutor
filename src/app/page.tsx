@@ -12,11 +12,13 @@ import LevelMap from "@/components/LevelMap";
 import TypingArena from "@/components/TypingArena";
 import SpeedTestArena from "@/components/SpeedTestArena";
 import AuthModal from "@/components/AuthModal";
+import TypingDisplay from "@/components/TypingDisplay";
 import { audioManager } from "@/lib/audioManager";
 import { hasOnboarded, setOnboarded } from "@/lib/cookies";
 import { ALL_LEVELS, LevelConfig } from "@/lib/curriculum";
+import { isCharMatch } from "@/lib/kurdishKeyMap";
 
-const ONBOARDING_TEXT = "سڵاو كوردستان";
+const ONBOARDING_TEXT = "سڵاو كوردستان!";
 
 function MainAppContent() {
   const { user, authLoading } = useAuth();
@@ -27,6 +29,7 @@ function MainAppContent() {
 
   // Onboarding interactive typing state
   const [onboardIndex, setOnboardIndex] = useState<number>(0);
+  const [onboardErrorIndex, setOnboardErrorIndex] = useState<number | null>(null);
   const [onboardSuccess, setOnboardSuccess] = useState<boolean>(false);
 
   // Check cookies & auth on mount: wait for authLoading before deciding view
@@ -52,22 +55,11 @@ function MainAppContent() {
       const target = ONBOARDING_TEXT[onboardIndex];
       if (!target) return;
 
-      // Allow matching Kurdish letters and spaces
-      const isMatch =
-        keyChar === target ||
-        (keyChar === " " && target === " ") ||
-        ((target === "ك" || target === "ک") && (keyChar === "ك" || keyChar === "ک" || keyChar === "k")) ||
-        (target === "س" && (keyChar === "س" || keyChar === "s")) ||
-        (target === "ڵ" && (keyChar === "ڵ" || keyChar === "l")) ||
-        (target === "ا" && (keyChar === "ا" || keyChar === "a")) ||
-        (target === "و" && (keyChar === "و" || keyChar === "w")) ||
-        (target === "ر" && (keyChar === "ر" || keyChar === "r")) ||
-        (target === "د" && (keyChar === "د" || keyChar === "d")) ||
-        (target === "ت" && (keyChar === "ت" || keyChar === "t")) ||
-        (target === "ن" && (keyChar === "ن" || keyChar === "n"));
+      const isMatch = isCharMatch(keyChar, target);
 
       if (isMatch) {
         audioManager.playMechanicalKey();
+        setOnboardErrorIndex(null);
         const nextIdx = onboardIndex + 1;
         setOnboardIndex(nextIdx);
 
@@ -94,6 +86,7 @@ function MainAppContent() {
         }
       } else {
         audioManager.playWrongKey();
+        setOnboardErrorIndex(onboardIndex);
       }
     },
     [onboardIndex, onboardSuccess, view]
@@ -202,42 +195,34 @@ function MainAppContent() {
                 </div>
 
                 {/* Floating Headline */}
-                <motion.h1
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="floating-glow text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-center tracking-tight mb-2 drop-shadow-sm"
-                >
-                  سڵاو كوردستان!
-                </motion.h1>
+                <div className="w-full flex justify-center items-center py-2 md:py-4 overflow-visible">
+                  <motion.h1
+                    className="floating-glow will-change-transform py-2 md:py-4 leading-relaxed md:leading-loose text-4xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-center mb-2 drop-shadow-sm"
+                  >
+                    سڵاو كوردستان!
+                  </motion.h1>
+                </div>
 
-                {/* Interactive Onboarding Prompt: Type "سڵاو كوردستان" */}
-                <div className="bg-slate-50/90 rounded-2xl p-4 px-6 border-2 border-slate-200/80 mb-6 flex flex-col items-center shadow-xs" dir="rtl">
-                  <span className="text-xs font-bold text-slate-500 mb-1.5">
+                {/* Interactive Onboarding Prompt: Type "سڵاو كوردستان!" */}
+                <div
+                  id="onboarding-prompt-box"
+                  className="bg-slate-50/90 rounded-2xl p-4 px-6 border-2 border-slate-200/80 mb-6 flex flex-col items-center shadow-xs font-[family-name:var(--font-vazirmatn)]"
+                  dir="rtl"
+                >
+                  <span className="text-xs font-bold text-slate-500 mb-2">
                     بۆ دەستپێکردن و چوونە ناو نەخشەی ئاستەکان، ئەم دەستەواژەیە بنووسە:
                   </span>
 
-                  <div className="flex items-center gap-1 text-2xl md:text-3xl font-black font-mono">
-                    {Array.from(ONBOARDING_TEXT).map((char, i) => {
-                      const isTyped = i < onboardIndex;
-                      const isCurrent = i === onboardIndex;
-
-                      let cClass = "text-slate-400";
-                      let bClass = "";
-
-                      if (isTyped) {
-                        cClass = "text-emerald-600";
-                      } else if (isCurrent) {
-                        cClass = "text-slate-900";
-                        bClass =
-                          "bg-emerald-200/90 rounded-md px-1 border-b-4 border-emerald-500 animate-pulse";
-                      }
-
-                      return (
-                        <span key={i} className={`inline-block mx-0.5 transition-all ${cClass} ${bClass}`}>
-                          {char === " " ? "␣" : char}
-                        </span>
-                      );
-                    })}
+                  <div
+                    className="w-full flex items-center justify-center font-[family-name:var(--font-vazirmatn)] py-1"
+                    dir="rtl"
+                  >
+                    <TypingDisplay
+                      targetText={ONBOARDING_TEXT}
+                      currentIndex={onboardIndex}
+                      errorIndex={onboardErrorIndex}
+                      charSizeClass="text-2xl md:text-3xl"
+                    />
                   </div>
 
                   {onboardSuccess ? (
