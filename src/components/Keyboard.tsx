@@ -25,7 +25,7 @@ interface KeyboardProps {
 export const SHIFTED_TARGET_CHARS = new Set([
   "!", "@", "#", "$", "٪", "^", "&", "*", ")", "(", "_", "+",
   "~", "`", "وو", "ي", "ڕ", "ط", "ێ", "ء", "ع", "ؤ", "ث", "}", "{", "|",
-  "آ", "ش", "ذ", "إ", "غ", "ھ", "\u200c", "أ", "ك", "ڵ", ":", '"',
+  "آ", "ش", "ذ", "إ", "غ", "ھ", "\u200c", "أ", "ڵ", ":", '"',
   "ض", "ص", "چ", "ظ", "ى", "ة", "ـ", ">", "<", "؟"
 ]);
 
@@ -79,7 +79,7 @@ export default function Keyboard({ targetKey, onKeyPress, showHud = true }: Keyb
     { label: "گ", shiftLabel: "غ", keyId: "گ", isSpecial: true, altChars: ["g", "G", "گ", "غ"] },
     { label: "هـ", shiftLabel: "ھ", keyId: "ه", altChars: ["h", "H", "ه", "ھ", "هـ", "\u200c"] },
     { label: "ژ", shiftLabel: "أ", keyId: "ژ", isSpecial: true, altChars: ["j", "J", "ژ", "أ"] },
-    { label: "ک", shiftLabel: "ك", keyId: "ک", altChars: ["k", "K", "ک", "ك"] },
+    { label: "ك", keyId: "ك", altChars: ["k", "K", "ك", "ک"] },
     { label: "ل", shiftLabel: "ڵ", keyId: "ل", isSpecial: true, altChars: ["l", "L", "ل", "ڵ"] },
     { label: "؛", shiftLabel: ":", keyId: ";", altChars: [";", ":", "؛"] },
     { label: "'", shiftLabel: '"', keyId: "'", altChars: ["'", '"'] },

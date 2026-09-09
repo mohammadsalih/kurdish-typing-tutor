@@ -88,8 +88,8 @@ const KEY_CHAR_MAP: Record<string, string[]> = {
   "هـ": ["h", "H", "ه", "ھ", "هـ"],
   "ژ": ["j", "ژ"],
   "أ": ["J", "أ"],
-  "ک": ["k", "ک", "ك"],
-  "ك": ["K", "ك"],
+  "ک": ["k", "K", "ک", "ك"],
+  "ك": ["k", "K", "ك", "ک"],
   "ل": ["l", "ل"],
   "ڵ": ["L", "ڵ"],
   "؛": [";", "؛"],
@@ -326,6 +326,8 @@ export default function TypingArena({
       const isMatch =
         inputChar === target ||
         (inputChar === " " && target === " ") ||
+        ((target === "ك" || target === "ک") &&
+          (inputChar === "k" || inputChar === "K" || inputChar === "ك" || inputChar === "ک")) ||
         Boolean(KEY_CHAR_MAP[target] && KEY_CHAR_MAP[target].includes(inputChar));
 
       if (isMatch) {

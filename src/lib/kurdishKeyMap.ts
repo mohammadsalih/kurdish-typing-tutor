@@ -71,8 +71,8 @@ export const KEY_CHAR_MAP: Record<string, string[]> = {
   "هـ": ["h", "H", "ه", "ھ", "هـ"],
   "ژ": ["j", "ژ"],
   "أ": ["J", "أ"],
-  "ک": ["k", "ک", "ك"],
-  "ك": ["K", "ك"],
+  "ک": ["k", "K", "ک", "ك"],
+  "ك": ["k", "K", "ك", "ک"],
   "ل": ["l", "ل"],
   "ڵ": ["L", "ڵ"],
   "؛": [";", "؛"],
@@ -112,6 +112,12 @@ export const KEY_CHAR_MAP: Record<string, string[]> = {
 export function isCharMatch(inputChar: string, targetChar: string): boolean {
   if (inputChar === targetChar) return true;
   if (inputChar === " " && targetChar === " ") return true;
+  if (
+    (targetChar === "ك" || targetChar === "ک") &&
+    (inputChar === "k" || inputChar === "K" || inputChar === "ك" || inputChar === "ک")
+  ) {
+    return true;
+  }
   const mapped = KEY_CHAR_MAP[targetChar];
   if (mapped && mapped.includes(inputChar)) return true;
   return false;
